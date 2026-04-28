@@ -1,20 +1,22 @@
 package org.example;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.Statement;
 
 public class DatabaseInitService {
+
     public static void main(String[] args) {
         try {
             String sql = Files.readString(Paths.get("sql/init_db.sql"));
 
-            var conn = Database.getInstance().getConnection();
+            Connection conn = Database.getInstance().getConnection();
+            Statement statement = conn.createStatement();
+            statement.execute(sql);
 
-            try (var ps = conn.prepareStatement(sql)) {
-                ps.execute();
-            }
-
-            System.out.println("DB initialized");
+            System.out.println("Database initialized successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();

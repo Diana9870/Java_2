@@ -1,5 +1,7 @@
 import java.time.LocalDate;
 
+package org.example.model;
+
 public class WorkerAge {
     private String type;
     private String name;

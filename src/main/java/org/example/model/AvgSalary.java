@@ -1,3 +1,5 @@
+package org.example.model;
+
 public class AvgSalary {
     private String level;
     private double avgSalary;

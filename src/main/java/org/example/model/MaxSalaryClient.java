@@ -1,3 +1,5 @@
+package org.example.model;
+
 public class MaxSalaryClient {
     private String name;
     private int totalSalary;

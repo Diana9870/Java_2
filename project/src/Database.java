@@ -16,11 +16,11 @@ public class Database {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            throw new RuntimeException("DB connection error", e);
+            throw new RuntimeException("Cannot connect to DB", e);
         }
     }
 
-    public static Database getInstance() {
+    public static synchronized Database getInstance() {
         if (instance == null) {
             instance = new Database();
         }

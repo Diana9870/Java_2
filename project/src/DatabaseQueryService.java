@@ -1,10 +1,11 @@
 package org.example;
 
+import org.example.model.Client;
+import org.example.model.MaxProjectCountClient;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,19 +15,44 @@ public class DatabaseQueryService {
         List<MaxProjectCountClient> result = new ArrayList<>();
 
         try {
-            String sql = new String(Files.readAllBytes(
-                    Paths.get("sql/find_max_projects_client.sql")));
+            String sql = Files.readString(
+                    Paths.get("sql/find_max_projects_client.sql"));
 
-            Connection conn = Database.getInstance().getConnection();
-            Statement stmt = conn.createStatement();
+            try (Connection conn = Database.getInstance().getConnection();
+                 var ps = conn.prepareStatement(sql);
+                 var rs = ps.executeQuery()) {
 
-            ResultSet rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    result.add(new MaxProjectCountClient(
+                            rs.getString("name"),
+                            rs.getInt("project_count")
+                    ));
+                }
+            }
 
-            while (rs.next()) {
-                String name = rs.getString("name");
-                int count = rs.getInt("project_count");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-                result.add(new MaxProjectCountClient(name, count));
+        return result;
+    }
+
+    public List<Client> findAllClients() {
+        List<Client> result = new ArrayList<>();
+
+        try {
+            String sql = Files.readString(
+                    Paths.get("sql/find_all_clients.sql"));
+
+            try (Connection conn = Database.getInstance().getConnection();
+                 var ps = conn.prepareStatement(sql);
+                 var rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    result.add(new Client(
+                            rs.getString("name")
+                    ));
+                }
             }
 
         } catch (Exception e) {

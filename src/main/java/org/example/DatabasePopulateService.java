@@ -9,7 +9,7 @@ public class DatabasePopulateService {
 
     public static void main(String[] args) {
         try {
-            String sql = Files.readString(Paths.get("sql/populate_db.sql"));
+            String sql = Files.readString(Paths.get("src/main/resources/sql/populate_db.sql"));
 
             Connection conn = Database.getInstance().getConnection();
             Statement statement = conn.createStatement();

@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55db3b3e-b80d-4305-bc9d-95bdfdcfc954" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/model/YoungestEldestWorker.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/sql/print_project_prices.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DatabaseInitService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DatabaseInitService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DatabasePopulateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DatabasePopulateService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DatabaseQueryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DatabaseQueryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/MaxProjectCountClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/MaxProjectCountClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +77,7 @@
       <option name="presentableId" value="Default" />
       <updated>1777412311822</updated>
       <workItem from="1777412313272" duration="4648000" />
-      <workItem from="1777477378351" duration="302000" />
+      <workItem from="1777477378351" duration="1505000" />
     </task>
     <servers />
   </component>

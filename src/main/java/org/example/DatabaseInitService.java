@@ -10,7 +10,7 @@ public class DatabaseInitService {
 
     public static void main(String[] args) {
         try {
-            String sql = Files.readString(Paths.get("sql/init_db.sql"));
+            String sql = Files.readString(Paths.get("src/main/resources/sql/init_db.sql"));
 
             Connection conn = Database.getInstance().getConnection();
             Statement statement = conn.createStatement();

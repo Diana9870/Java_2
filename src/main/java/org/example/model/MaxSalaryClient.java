@@ -1,16 +1,20 @@
 package org.example.model;
 
-public class MaxSalaryClient {
-    private String name;
-    private int totalSalary;
+public class MaxSalaryWorker {
 
-    public MaxSalaryClient(String name, int totalSalary) {
+    private String name;
+    private int salary;
+
+    public MaxSalaryWorker(String name, int salary) {
         this.name = name;
-        this.totalSalary = totalSalary;
+        this.salary = salary;
     }
 
     @Override
     public String toString() {
-        return name + " -> $" + totalSalary;
+        return "MaxSalaryWorker{" +
+                "name='" + name + '\'' +
+                ", salary=" + salary +
+                '}';
     }
 }

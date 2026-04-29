@@ -2,19 +2,20 @@ package org.example;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.Statement;
 
 public class DatabasePopulateService {
+
     public static void main(String[] args) {
         try {
             String sql = Files.readString(Paths.get("sql/populate_db.sql"));
 
-            var conn = Database.getInstance().getConnection();
+            Connection conn = Database.getInstance().getConnection();
+            Statement statement = conn.createStatement();
+            statement.execute(sql);
 
-            try (var ps = conn.prepareStatement(sql)) {
-                ps.execute();
-            }
-
-            System.out.println("DB populated");
+            System.out.println("Database populated successfully.");
 
         } catch (Exception e) {
             e.printStackTrace();

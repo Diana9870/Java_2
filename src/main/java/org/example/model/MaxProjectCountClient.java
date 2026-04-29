@@ -1,6 +1,7 @@
 package org.example.model;
 
 public class MaxProjectCountClient {
+
     private String name;
     private int projectCount;
 
@@ -11,6 +12,9 @@ public class MaxProjectCountClient {
 
     @Override
     public String toString() {
-        return name + " -> " + projectCount;
+        return "MaxProjectCountClient{" +
+                "name='" + name + '\'' +
+                ", projectCount=" + projectCount +
+                '}';
     }
 }

@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.io.InputStream;
 
 public class DatabasePopulateService {
 
@@ -20,8 +21,15 @@ public class DatabasePopulateService {
                 throw new RuntimeException("SQL file not found!");
             }
 
-            String sql = new String(is.readAllBytes());
-            statement.execute(sql);
+            String sql = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+
+            String[] queries = sql.split(";");
+
+            for (String query : queries) {
+                if (!query.trim().isEmpty()) {
+                    statement.execute(query.trim());
+                }
+            }
 
             System.out.println("Database populated successfully.");
 

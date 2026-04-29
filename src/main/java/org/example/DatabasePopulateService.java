@@ -8,11 +8,19 @@ import java.sql.Statement;
 public class DatabasePopulateService {
 
     public static void main(String[] args) {
-        try {
-            String sql = Files.readString(Paths.get("src/main/resources/sql/populate_db.sql"));
+        try (
+                InputStream is = DatabasePopulateService.class
+                        .getClassLoader()
+                        .getResourceAsStream("sql/populate_db.sql");
 
-            Connection conn = Database.getInstance().getConnection();
-            Statement statement = conn.createStatement();
+                Connection conn = Database.getInstance().getConnection();
+                Statement statement = conn.createStatement();
+        ) {
+            if (is == null) {
+                throw new RuntimeException("SQL file not found!");
+            }
+
+            String sql = new String(is.readAllBytes());
             statement.execute(sql);
 
             System.out.println("Database populated successfully.");

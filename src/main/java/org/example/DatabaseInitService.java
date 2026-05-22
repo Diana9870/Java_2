@@ -1,39 +1,45 @@
 package org.example;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseInitService {
 
+    private static final String INIT_DB_FILE = "sql/init_db.sql";
+
     public static void main(String[] args) {
-        try (
-                InputStream is = DatabaseInitService.class
-                        .getClassLoader()
-                        .getResourceAsStream("sql/init_db.sql");
+        new DatabaseInitService().initDb();
+    }
 
-                Connection conn = Database.getInstance().getConnection();
-                Statement statement = conn.createStatement();
-        ) {
+    public void initDb() {
+        String sql = readSqlFile(INIT_DB_FILE);
 
-            if (is == null) {
-                throw new RuntimeException("SQL file not found: sql/init_db.sql");
-            }
+        Connection conn = Database.getInstance().getConnection();
 
-            String sql = new String(is.readAllBytes());
+        try (Statement statement = conn.createStatement()) {
 
-            String[] queries = sql.split(";");
-
-            for (String query : queries) {
-                if (!query.trim().isEmpty()) {
-                    statement.execute(query);
-                }
-            }
+            statement.execute(sql);
 
             System.out.println("Database initialized successfully.");
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            System.err.println("Error during database initialization:");
             e.printStackTrace();
+        }
+    }
+
+    private String readSqlFile(String filePath) {
+        try {
+            return Files.readString(Path.of(filePath));
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Cannot read SQL file: " + filePath,
+                    e
+            );
         }
     }
 }

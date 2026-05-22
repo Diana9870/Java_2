@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class DatabasePopulateService {
 

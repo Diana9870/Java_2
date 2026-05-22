@@ -2,6 +2,8 @@ package org.example;
 
 import org.example.model.*;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,11 +16,7 @@ public class DatabaseQueryService {
 
         List<Client> clients = new ArrayList<>();
 
-        String sql = """
-                SELECT id, name
-                FROM client
-                ORDER BY id
-                """;
+        String sql = readSql("find_all_clients.sql");
 
         try (
                 Connection conn = Database.getInstance().getConnection();
@@ -37,7 +35,7 @@ public class DatabaseQueryService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot fetch clients", e);
         }
 
         return clients;
@@ -45,7 +43,7 @@ public class DatabaseQueryService {
 
     public long getClientCount() {
 
-        String sql = "SELECT COUNT(*) AS client_count FROM client";
+        String sql = readSql("find_client_count.sql");
 
         try (
                 Connection conn = Database.getInstance().getConnection();
@@ -58,7 +56,7 @@ public class DatabaseQueryService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot fetch client count", e);
         }
 
         return 0;
@@ -68,13 +66,7 @@ public class DatabaseQueryService {
 
         List<LongestProject> projects = new ArrayList<>();
 
-        String sql = """
-                SELECT p.id,
-                       DATEDIFF('MONTH', p.start_date, p.finish_date) AS month_count
-                FROM project p
-                ORDER BY month_count DESC
-                LIMIT 1
-                """;
+        String sql = readSql("find_longest_projects.sql");
 
         try (
                 Connection conn = Database.getInstance().getConnection();
@@ -93,7 +85,7 @@ public class DatabaseQueryService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot fetch longest projects", e);
         }
 
         return projects;
@@ -103,15 +95,7 @@ public class DatabaseQueryService {
 
         List<MaxProjectCountClient> result = new ArrayList<>();
 
-        String sql = """
-                SELECT c.name,
-                       COUNT(p.id) AS project_count
-                FROM client c
-                JOIN project p ON c.id = p.client_id
-                GROUP BY c.name
-                ORDER BY project_count DESC
-                LIMIT 1
-                """;
+        String sql = readSql("find_max_projects_client.sql");
 
         try (
                 Connection conn = Database.getInstance().getConnection();
@@ -130,7 +114,7 @@ public class DatabaseQueryService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot fetch max projects client", e);
         }
 
         return result;
@@ -140,12 +124,7 @@ public class DatabaseQueryService {
 
         List<MaxSalaryClient> result = new ArrayList<>();
 
-        String sql = """
-                SELECT name, salary
-                FROM worker
-                ORDER BY salary DESC
-                LIMIT 1
-                """;
+        String sql = readSql("find_max_salary_worker.sql");
 
         try (
                 Connection conn = Database.getInstance().getConnection();
@@ -164,7 +143,7 @@ public class DatabaseQueryService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot fetch max salary worker", e);
         }
 
         return result;
@@ -174,17 +153,7 @@ public class DatabaseQueryService {
 
         List<WorkerAge> result = new ArrayList<>();
 
-        String sql = """
-                SELECT 'YOUNGEST' AS type, name, birthday
-                FROM worker
-                WHERE birthday = (SELECT MAX(birthday) FROM worker)
-
-                UNION
-
-                SELECT 'ELDEST' AS type, name, birthday
-                FROM worker
-                WHERE birthday = (SELECT MIN(birthday) FROM worker)
-                """;
+        String sql = readSql("find_youngest_eldest_workers.sql");
 
         try (
                 Connection conn = Database.getInstance().getConnection();
@@ -198,13 +167,15 @@ public class DatabaseQueryService {
 
                 worker.setType(rs.getString("type"));
                 worker.setName(rs.getString("name"));
-                worker.setBirthday(rs.getDate("birthday").toLocalDate());
+                worker.setBirthday(
+                        rs.getDate("birthday").toLocalDate()
+                );
 
                 result.add(worker);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot fetch youngest/eldest workers", e);
         }
 
         return result;
@@ -214,13 +185,7 @@ public class DatabaseQueryService {
 
         List<AvgSalaryByLevel> result = new ArrayList<>();
 
-        String sql = """
-                SELECT level,
-                       AVG(salary) AS avg_salary
-                FROM worker
-                GROUP BY level
-                ORDER BY avg_salary DESC
-                """;
+        String sql = readSql("find_avg_salary_by_level.sql");
 
         try (
                 Connection conn = Database.getInstance().getConnection();
@@ -239,7 +204,7 @@ public class DatabaseQueryService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot fetch average salaries", e);
         }
 
         return result;
@@ -249,15 +214,7 @@ public class DatabaseQueryService {
 
         List<ProjectPrice> result = new ArrayList<>();
 
-        String sql = """
-                SELECT p.id AS project_id,
-                       SUM(w.salary) AS price
-                FROM project p
-                JOIN project_worker pw ON p.id = pw.project_id
-                JOIN worker w ON pw.worker_id = w.id
-                GROUP BY p.id
-                ORDER BY price DESC
-                """;
+        String sql = readSql("print_project_prices.sql");
 
         try (
                 Connection conn = Database.getInstance().getConnection();
@@ -276,9 +233,36 @@ public class DatabaseQueryService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Cannot fetch project prices", e);
         }
 
         return result;
+    }
+
+    private String readSql(String fileName) {
+
+        try (
+                InputStream is = getClass()
+                        .getClassLoader()
+                        .getResourceAsStream("sql/" + fileName)
+        ) {
+
+            if (is == null) {
+                throw new RuntimeException(
+                        "SQL file not found: " + fileName
+                );
+            }
+
+            return new String(
+                    is.readAllBytes(),
+                    StandardCharsets.UTF_8
+            );
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Cannot read SQL file: " + fileName,
+                    e
+            );
+        }
     }
 }
